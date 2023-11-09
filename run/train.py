@@ -10,7 +10,8 @@ from pytorch_lightning.callbacks import (
     RichModelSummary,
     RichProgressBar,
 )
-from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.loggers import TensorBoardLogger
+#from pytorch_lightning.loggers import WandbLogger
 
 from src.conf import TrainConfig
 from src.datamodule.seg import SegDataModule
@@ -45,12 +46,17 @@ def main(cfg: TrainConfig):
     progress_bar = RichProgressBar()
     model_summary = RichModelSummary(max_depth=2)
 
-    # init experiment logger
-    pl_logger = WandbLogger(
-        name=cfg.exp_name,
-        project="child-mind-institute-detect-sleep-states",
+     # init experiment logger
+    pl_logger = TensorBoardLogger(
+    save_dir="logs",  # ログを保存するディレクトリ。適切なパスに変更してください。
+    name=cfg.exp_name,
     )
-    pl_logger.log_hyperparams(cfg)
+    
+    # pl_logger = WandbLogger(
+    #     name=cfg.exp_name,
+    #     project="child-mind-institute-detect-sleep-states",
+    # )
+    # pl_logger.log_hyperparams(cfg)
 
     trainer = Trainer(
         # env
