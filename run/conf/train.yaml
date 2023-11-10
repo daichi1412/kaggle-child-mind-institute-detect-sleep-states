@@ -24,7 +24,7 @@ downsample_rate: 2
 upsample_rate: 1
 
 trainer:
-  epochs: 20
+  epochs: 50
   accelerator: auto
   use_amp: true
   debug: false
