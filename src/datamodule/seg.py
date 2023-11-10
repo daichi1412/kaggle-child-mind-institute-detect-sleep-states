@@ -84,7 +84,9 @@ def get_label(
     this_event_df: pd.DataFrame, num_frames: int, duration: int, start: int, end: int
 ) -> np.ndarray:
     # # (start, end)の範囲と(onset, wakeup)の範囲が重なるものを取得
-    this_event_df = this_event_df.query("@start <= wakeup & onset <= @end")
+    #this_event_df = this_event_df.query("@start <= wakeup & onset <= @end")
+    mask = (this_event_df['wakeup'] >= start) & (this_event_df['onset'] <= end)
+    this_event_df = this_event_df[mask]
 
     label = np.zeros((num_frames, 3))
     # onset, wakeup, sleepのラベルを作成
