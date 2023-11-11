@@ -19,16 +19,16 @@ def copy_files_with_exts(source_dir: Path, dest_dir: Path, exts: list):
         for source_path in source_dir.rglob(f"*{ext}"):
             # dest_dir内での相対パスを計算
             relative_path = source_path.relative_to(source_dir)
-            #dest_path = dest_dir / relative_path
+            dest_path = dest_dir / relative_path
             
-            dest_dir_new = Path('/kaggle/working')
-            dest_dir_new.mkdir(parents=True, exist_ok=True)
-            dest_path = dest_dir_new / relative_path
-            dest_path.parent.mkdir(parents=True, exist_ok=True)
+            # dest_dir_new = Path('/kaggle/working')
+            # dest_dir_new.mkdir(parents=True, exist_ok=True)
+            # dest_path = dest_dir_new / relative_path
+            # dest_path.parent.mkdir(parents=True, exist_ok=True)
 
 
             # 必要に応じてコピー先ディレクトリを作成
-            #dest_path.parent.mkdir(parents=True, exist_ok=True)
+            dest_path.parent.mkdir(parents=True, exist_ok=True)
 
             # ファイルをコピー
             shutil.copy2(source_path, dest_path)
@@ -57,8 +57,13 @@ def main(
         user_name (str, optional): kaggleのユーザー名.
         new (bool, optional): 新規データセットとしてアップロードするかどうか.
     """
-    tmp_dir = Path("./tmp")
+    #tmp_dir = Path("./tmp")
+    #tmp_dir.mkdir(parents=True, exist_ok=True)
+
+    tmp_dir = Path('/kaggle/working')
     tmp_dir.mkdir(parents=True, exist_ok=True)
+
+    
 
     # 拡張子が.pthのファイルをコピー
     copy_files_with_exts(dir, tmp_dir, extentions)
