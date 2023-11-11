@@ -19,10 +19,16 @@ def copy_files_with_exts(source_dir: Path, dest_dir: Path, exts: list):
         for source_path in source_dir.rglob(f"*{ext}"):
             # dest_dir内での相対パスを計算
             relative_path = source_path.relative_to(source_dir)
-            dest_path = dest_dir / relative_path
+            #dest_path = dest_dir / relative_path
+            
+            dest_dir_new = Path('/kaggle/working')
+            dest_dir_new.mkdir(parents=True, exist_ok=True)
+            dest_path = dest_dir_new / relative_path
+            dest_path.parent.mkdir(parents=True, exist_ok=True)
+
 
             # 必要に応じてコピー先ディレクトリを作成
-            dest_path.parent.mkdir(parents=True, exist_ok=True)
+            #dest_path.parent.mkdir(parents=True, exist_ok=True)
 
             # ファイルをコピー
             shutil.copy2(source_path, dest_path)
