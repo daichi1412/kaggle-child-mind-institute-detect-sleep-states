@@ -24,7 +24,7 @@ downsample_rate: 2
 upsample_rate: 1
 
 trainer:
-  epochs: 20
+  epochs: 50
   accelerator: auto
   use_amp: true
   debug: false
@@ -67,10 +67,10 @@ features:
   # - "month_cos"
   - "hour_sin"
   - "hour_cos"
-  - "minute_sin"
-  - "minute_cos"
-  - "anglez_sin"
-  - "anglez_cos"
+  # - "minute_sin"
+  # - "minute_cos"
+  # - "anglez_sin"
+  # - "anglez_cos"
 
 # optimizer
 optimizer:
