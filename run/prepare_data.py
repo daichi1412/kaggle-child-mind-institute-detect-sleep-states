@@ -103,9 +103,9 @@ def add_feature(series_df: pl.DataFrame) -> pl.DataFrame:
     # 新しい特徴量の計算を追加
     hour_plus_minute = (pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.minute() // 6)
     series_df = series_df.with_columns(
-        hour_plus_minute.map_batches(lambda batch: batch.apply(lambda x: signal_awake_dict.get(x, float('nan')))).alias("signal_awake"),
-        hour_plus_minute.map_batches(lambda batch: batch.apply(lambda x: signal_onset_dict.get(x, float('nan')))).alias("signal_onset"),
-        hour_plus_minute.map_batches(lambda batch: batch.apply(lambda x: signal_poly_dict.get(x, float('nan')))).alias("signal_poly")
+        hour_plus_minute.map_batches(lambda batch: batch.map_elements(lambda x: signal_awake_dict.get(x, float('nan')))).alias("signal_awake"),
+        hour_plus_minute.map_batches(lambda batch: batch.map_elements(lambda x: signal_onset_dict.get(x, float('nan')))).alias("signal_onset"),
+        hour_plus_minute.map_batches(lambda batch: batch.map_elements(lambda x: signal_poly_dict.get(x, float('nan')))).alias("signal_poly")
     )
     
     return series_df.select("series_id", *FEATURE_NAMES)
