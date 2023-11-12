@@ -163,7 +163,7 @@ def main(cfg: PrepareDataConfig):
         series_df = (
             series_lf.with_columns(
                 pl.col("timestamp").str.to_datetime("%Y-%m-%dT%H:%M:%S%z"),
-                deg_to_rad(pl.col("anglez")).alias("anglez_rad"),
+                #deg_to_rad(pl.col("anglez")).alias("anglez_rad"),
                 (pl.col("anglez") - ANGLEZ_MEAN) / ANGLEZ_STD,
                 (pl.col("enmo") - ENMO_MEAN) / ENMO_STD,
             )
@@ -173,7 +173,7 @@ def main(cfg: PrepareDataConfig):
                     pl.col("anglez"),
                     pl.col("enmo"),
                     pl.col("timestamp"),
-                    pl.col("anglez_rad"),
+                    #pl.col("anglez_rad"),
                 ]
             )
             .collect(streaming=True)
