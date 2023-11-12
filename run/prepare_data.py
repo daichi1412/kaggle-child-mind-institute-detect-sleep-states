@@ -4,6 +4,7 @@ from pathlib import Path
 import hydra
 import numpy as np
 import polars as pl
+from scipy.stats import norm
 from tqdm import tqdm
 
 from src.conf import PrepareDataConfig
