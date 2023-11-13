@@ -73,9 +73,8 @@ def poly_fit(time):
     return coefficients[0] + coefficients[1] * time + coefficients[2] * time**2 + coefficients[3] * time**3
 
 def normal_pdf(x, mean, std):
-    # 平方根は指数を 0.5 として計算します
-    sqrt_term = std * pl.pow(2 * np.pi, 0.5)
-    return (1 / sqrt_term) * ((x - mean) / std).pow(2).neg().exp() * 0.5
+    sqrt_term = std * (2 * np.pi) ** 0.5
+    return (1 / sqrt_term) * pl.functions.exp(-0.5 * ((x - mean) / std) ** 2)
 
 
 def calc_mixture_gaussian(time, w1, mu1, sigma1, mu2, sigma2):
