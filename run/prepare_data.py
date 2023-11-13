@@ -74,7 +74,7 @@ def poly_fit(time):
 
 def normal_pdf(x, mean, std):
     sqrt_term = std * (2 * np.pi) ** 0.5
-    return (1 / sqrt_term) * pl.functions.exp(-0.5 * ((x - mean) / std) ** 2)
+    return (1 / sqrt_term) * ((-0.5 * ((x - mean) / std) ** 2).exp())
 
 
 def calc_mixture_gaussian(time, w1, mu1, sigma1, mu2, sigma2):
