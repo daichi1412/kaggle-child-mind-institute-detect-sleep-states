@@ -4,7 +4,7 @@ from pathlib import Path
 import hydra
 import numpy as np
 import polars as pl
-from scipy.stats import norm
+#from scipy.stats import norm
 from tqdm import tqdm
 
 from src.conf import PrepareDataConfig
@@ -72,8 +72,17 @@ coefficients = [0.7498337722857453, -0.29120336781669365, 0.0325499456141388, -0
 def poly_fit(time):
     return coefficients[0] + coefficients[1] * time + coefficients[2] * time**2 + coefficients[3] * time**3
 
+def normal_pdf(x, mean, std):
+    return (1 / (std * np.sqrt(2 * np.pi))) * pl.exp(-0.5 * ((x - mean) / std) ** 2)
+
 def calc_mixture_gaussian(time, w1, mu1, sigma1, mu2, sigma2):
-    return w1 * norm.pdf(time, mu1, sigma1) + (1 - w1) * norm.pdf(time, mu2, sigma2)
+    gaussian1 = normal_pdf(time, mu1, sigma1)
+    gaussian2 = normal_pdf(time, mu2, sigma2)
+    return w1 * gaussian1 + (1 - w1) * gaussian2
+
+
+# def calc_mixture_gaussian(time, w1, mu1, sigma1, mu2, sigma2):
+#     return w1 * norm.pdf(time, mu1, sigma1) + (1 - w1) * norm.pdf(time, mu2, sigma2)
 
 
 def to_coord(x: pl.Expr, max_: int, name: str) -> list[pl.Expr]:
@@ -94,14 +103,14 @@ def add_feature(series_df: pl.DataFrame) -> pl.DataFrame:
         *to_coord(pl.col("timestamp").dt.hour(), 24, "hour"),
     )
     
-    # hour_plus_minute を NumPy 配列に変換
-    hour_plus_minute_np = (pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.minute() // 6).to_numpy()
+    # hour_plus_minute を計算
+    hour_plus_minute = (pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.minute() // 6) / 10
 
     # ベクトル化された操作で新しい特徴量を計算
     series_df = series_df.with_columns([
-        calc_mixture_gaussian(hour_plus_minute / 10, **awake_features).alias("signal_awake"),
-        calc_mixture_gaussian(hour_plus_minute / 10, **onset_features).alias("signal_onset"),
-        poly_fit(hour_plus_minute / 10).alias("signal_poly")
+        calc_mixture_gaussian(hour_plus_minute, **awake_features).alias("signal_awake"),
+        calc_mixture_gaussian(hour_plus_minute, **onset_features).alias("signal_onset"),
+        poly_fit(hour_plus_minute).alias("signal_poly")
     ])
     
     return series_df.select("series_id", *FEATURE_NAMES)
