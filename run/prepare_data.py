@@ -75,12 +75,6 @@ def poly_fit(time):
 def calc_mixture_gaussian(time, w1, mu1, sigma1, mu2, sigma2):
     return w1 * norm.pdf(time, mu1, sigma1) + (1 - w1) * norm.pdf(time, mu2, sigma2)
 
-# 新しい特徴量の辞書を生成
-new_time_units = np.arange(0, 240)  # 仮定
-signal_awake_dict = {hour: calc_mixture_gaussian(hour / 10, **awake_features) for hour in new_time_units}
-signal_onset_dict = {hour: calc_mixture_gaussian(hour / 10, **onset_features) for hour in new_time_units}
-signal_poly_dict = {hour: poly_fit(hour / 10) for hour in new_time_units}
-
 
 def to_coord(x: pl.Expr, max_: int, name: str) -> list[pl.Expr]:
     rad = 2 * np.pi * (x % max_) / max_
@@ -100,13 +94,15 @@ def add_feature(series_df: pl.DataFrame) -> pl.DataFrame:
         *to_coord(pl.col("timestamp").dt.hour(), 24, "hour"),
     )
     
-    # 新しい特徴量の計算を追加
-    hour_plus_minute = (pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.minute() // 6)
-    series_df = series_df.with_columns(
-        hour_plus_minute.map_batches(lambda batch: batch.map_elements(lambda x: signal_awake_dict.get(x, float('nan')))).alias("signal_awake"),
-        hour_plus_minute.map_batches(lambda batch: batch.map_elements(lambda x: signal_onset_dict.get(x, float('nan')))).alias("signal_onset"),
-        hour_plus_minute.map_batches(lambda batch: batch.map_elements(lambda x: signal_poly_dict.get(x, float('nan')))).alias("signal_poly")
-    )
+    # 時間に関連する特徴量を計算
+    hour_plus_minute = pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.hour() // 6
+
+    # ベクトル化された操作で新しい特徴量を計算
+    series_df = series_df.with_columns([
+        calc_mixture_gaussian(hour_plus_minute / 10, **awake_features).alias("signal_awake"),
+        calc_mixture_gaussian(hour_plus_minute / 10, **onset_features).alias("signal_onset"),
+        poly_fit(hour_plus_minute / 10).alias("signal_poly")
+    ])
     
     return series_df.select("series_id", *FEATURE_NAMES)
 
