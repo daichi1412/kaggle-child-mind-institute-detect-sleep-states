@@ -95,7 +95,7 @@ def add_feature(series_df: pl.DataFrame) -> pl.DataFrame:
     )
     
     # 時間に関連する特徴量を計算
-    hour_plus_minute = pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.hour() // 6
+    hour_plus_minute = pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.minute() // 6
 
     # ベクトル化された操作で新しい特徴量を計算
     series_df = series_df.with_columns([
