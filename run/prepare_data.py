@@ -73,7 +73,7 @@ def poly_fit(time):
     return coefficients[0] + coefficients[1] * time + coefficients[2] * time**2 + coefficients[3] * time**3
 
 def normal_pdf(x, mean, std):
-    return (1 / (std * np.sqrt(2 * np.pi))) * pl.exp(-0.5 * ((x - mean) / std) ** 2)
+    return (1 / (std * pl.sqrt(2 * np.pi))) * ((x - mean) / std).pow(2).neg().exp() * 0.5
 
 def calc_mixture_gaussian(time, w1, mu1, sigma1, mu2, sigma2):
     gaussian1 = normal_pdf(time, mu1, sigma1)
