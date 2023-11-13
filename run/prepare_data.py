@@ -94,8 +94,8 @@ def add_feature(series_df: pl.DataFrame) -> pl.DataFrame:
         *to_coord(pl.col("timestamp").dt.hour(), 24, "hour"),
     )
     
-    # 時間に関連する特徴量を計算
-    hour_plus_minute = pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.minute() // 6
+    # hour_plus_minute を NumPy 配列に変換
+    hour_plus_minute_np = (pl.col("timestamp").dt.hour() * 10 + pl.col("timestamp").dt.minute() // 6).to_numpy()
 
     # ベクトル化された操作で新しい特徴量を計算
     series_df = series_df.with_columns([
