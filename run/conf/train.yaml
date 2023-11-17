@@ -73,7 +73,7 @@ features:
   # - "anglez_cos"
   - "signal_awake"
   - "signal_onset"
-  - "signal_poly"
+  # - "signal_poly"
 
 # optimizer
 optimizer:
