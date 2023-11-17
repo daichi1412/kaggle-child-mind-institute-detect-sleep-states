@@ -56,4 +56,3 @@ features:
   - "hour_cos"
   - "signal_awake"
   - "signal_onset"
-  - "signal_poly"
