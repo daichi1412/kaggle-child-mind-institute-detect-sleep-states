@@ -24,7 +24,6 @@ FEATURE_NAMES = [
     "hour_cos",
     "signal_awake",
     "signal_onset",
-    "signal_poly",
 ]
 
 # FEATURE_NAMES = [
@@ -66,11 +65,11 @@ awake_features = {
 }
 
 # 3次多項式のパラメータ
-coefficients = [0.7498337722857453, -0.29120336781669365, 0.0325499456141388, -0.000865744935362603]
+#coefficients = [0.7498337722857453, -0.29120336781669365, 0.0325499456141388, -0.000865744935362603]
 
-# 3次多項式の値を計算する関数を定義
-def poly_fit(time):
-    return coefficients[0] + coefficients[1] * time + coefficients[2] * time**2 + coefficients[3] * time**3
+# # 3次多項式の値を計算する関数を定義
+# def poly_fit(time):
+#     return coefficients[0] + coefficients[1] * time + coefficients[2] * time**2 + coefficients[3] * time**3
 
 def normal_pdf(x, mean, std):
     sqrt_term = std * (2 * np.pi) ** 0.5
@@ -111,13 +110,11 @@ def add_feature(series_df: pl.DataFrame) -> pl.DataFrame:
     # ベクトル化された操作で新しい特徴量を計算
     series_df = series_df.with_columns([
         calc_mixture_gaussian(hour_plus_minute, **awake_features).alias("signal_awake"),
-        calc_mixture_gaussian(hour_plus_minute, **onset_features).alias("signal_onset"),
-        poly_fit(hour_plus_minute).alias("signal_poly")
+        calc_mixture_gaussian(hour_plus_minute, **onset_features).alias("signal_onset")
     ])
     
     return series_df.select("series_id", *FEATURE_NAMES)
-
-
+#poly_fit(hour_plus_minute).alias("signal_poly")
 
 
 # def add_feature(series_df: pl.DataFrame) -> pl.DataFrame:
