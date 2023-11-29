@@ -1,4 +1,4 @@
-train_series_ids:
+series_ids:
 - bccf2f2819f8
 - 3d53bfea61d6
 - 154fe824ed87
@@ -43,7 +43,6 @@ train_series_ids:
 - 483d6545417f
 - 0ef7d94fde99
 - fcca183903b7
-valid_series_ids:
 - d8de352c2657
 - 361366da569e
 - 5c55a5e717d6
