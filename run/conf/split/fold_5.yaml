@@ -1,4 +1,4 @@
-train_series_ids:
+series_ids:
 - b4b75225b224
 - 0f572d690310
 - a2b0a64ec9cf
@@ -43,7 +43,6 @@ train_series_ids:
 - 10469f6765bf
 - 9ee455e4770d
 - 89c7daa72eee
-valid_series_ids:
 - d515236bdeec
 - 9aed9ee12ae2
 - 062dbd4c95e6
