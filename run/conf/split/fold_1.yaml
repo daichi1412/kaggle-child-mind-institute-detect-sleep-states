@@ -1,4 +1,4 @@
-series_ids:
+valid_series_ids:
 - dacc6d652e35
 - b737f8c78ec5
 - cca14d1966c1
@@ -54,3 +54,5 @@ series_ids:
 - 2e9ced2c7976
 - f88e18cb4100
 - 1f96b9668bdf
+
+train_series_ids:
