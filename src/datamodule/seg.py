@@ -374,23 +374,28 @@ class SegDataModule(LightningDataModule):
         self.processed_dir = Path(cfg.dir.processed_dir)
         self.event_df = pl.read_csv(self.data_dir / "train_events.csv").drop_nulls()
 
-        if fold_number==1:
-            self.cfg.split = fold_1
-        elif fold_number==2:
-            self.cfg.split = fold_2
-        elif fold_number==3:
-            self.cfg.split = fold_3
-        elif fold_number==4:
-            self.cfg.split = fold_4
-        elif fold_number==5:
-            self.cfg.split = fold_5
 
-        self.train_event_df = self.event_df.filter(
-            pl.col("series_id").is_in(self.cfg.split.train_series_ids)
-        )
-        self.valid_event_df = self.event_df.filter(
-            pl.col("series_id").is_in(self.cfg.split.valid_series_ids)
-        )
+        # フォールド設定ファイルのパスを指定
+        fold_config_path = self.data_dir / f"conf/split/fold_{fold_number}.yaml"
+
+        # 設定ファイルを開き、内容を読み込む
+        with open(fold_config_path, 'r') as file:
+            fold_config = yaml.safe_load(file)
+
+        # train_series_idsとvalid_series_idsを取得
+        train_series_ids = fold_config['train_series_ids']
+        valid_series_ids = fold_config['valid_series_ids']
+
+        # トレーニングとバリデーションデータセットをフィルタリング
+        self.train_event_df = self.event_df.filter(pl.col("series_id").is_in(train_series_ids))
+        self.valid_event_df = self.event_df.filter(pl.col("series_id").is_in(valid_series_ids))
+
+        # self.train_event_df = self.event_df.filter(
+        #     pl.col("series_id").is_in(self.cfg.split.train_series_ids)
+        # )
+        # self.valid_event_df = self.event_df.filter(
+        #     pl.col("series_id").is_in(self.cfg.split.valid_series_ids)
+        # )
         # train data
         self.train_features = load_features(
             feature_names=self.cfg.features,
