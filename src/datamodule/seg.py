@@ -373,7 +373,18 @@ class SegDataModule(LightningDataModule):
         self.data_dir = Path(cfg.dir.data_dir)
         self.processed_dir = Path(cfg.dir.processed_dir)
         self.event_df = pl.read_csv(self.data_dir / "train_events.csv").drop_nulls()
-        self.cfg.split = f"fold_{fold_number}"
+
+        if fold_number==1:
+            self.cfg.split = fold_1
+        elif fold_number==2:
+            self.cfg.split = fold_2
+        elif fold_number==3:
+            self.cfg.split = fold_3
+        elif fold_number==4:
+            self.cfg.split = fold_4
+        elif fold_number==5:
+            self.cfg.split = fold_5
+
         self.train_event_df = self.event_df.filter(
             pl.col("series_id").is_in(self.cfg.split.train_series_ids)
         )
