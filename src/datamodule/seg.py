@@ -400,7 +400,7 @@ class SegDataModule(LightningDataModule):
         # train data
         self.train_features = load_features(
             feature_names=self.cfg.features,
-            series_ids=self.cfg.split.train_series_ids,
+            series_ids=train_series_ids,
             processed_dir=self.processed_dir,
             phase="train",
         )
@@ -409,7 +409,7 @@ class SegDataModule(LightningDataModule):
         self.valid_chunk_features = load_chunk_features(
             duration=self.cfg.duration,
             feature_names=self.cfg.features,
-            series_ids=self.cfg.split.valid_series_ids,
+            series_ids=valid_series_ids,
             processed_dir=self.processed_dir,
             phase="train",
         )
