@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+from omegaconf import OmegaConf
 import hydra
 import torch
 from pytorch_lightning import Trainer, seed_everything
@@ -103,12 +104,10 @@ if __name__ == "__main__":
 
 @hydra.main(config_path="conf", config_name="train", version_base="1.2")
 def train_fold(cfg: TrainConfig, fold_number: int):
-    # フォールド番号に基づいてSegDataModuleを初期化
-    datamodule = SegDataModule(cfg, fold_number)
-    LOGGER.info(f"Set Up DataModule for Fold {fold_number}")
-    # 以下、モデルの初期化とトレーニングのプロセス
-    # ...
-        seed_everything(cfg.seed)
+    # フォールドに基づいて設定を動的に上書き
+    cfg = OmegaConf.merge(cfg, {"split": f"fold_{fold_number}"})
+    
+    seed_everything(cfg.seed)
 
     # フォールド番号に基づいてSegDataModuleを初期化
     datamodule = SegDataModule(cfg, fold_number)
@@ -180,14 +179,9 @@ def train_fold(cfg: TrainConfig, fold_number: int):
     return
 
 def main():
-    # ここでHydraの設定を読み込む
-    #cfg = ...  # Hydraを使って設定を読み込む
-    
-    seed_everything(cfg.seed)
-
     # 各フォールドでトレーニングを実行
     for fold_number in range(1, 6):
-        train_fold(cfg, fold_number)
+        train_fold(fold_number=fold_number)
 
 if __name__ == "__main__":
     main()
