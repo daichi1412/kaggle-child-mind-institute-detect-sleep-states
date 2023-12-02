@@ -306,7 +306,6 @@ class TestDataset(Dataset):
 class SegDataModule(LightningDataModule):
     def __init__(self, cfg: TrainConfig):
         super().__init__()
-        cfg = OmegaConf.merge(cfg, {"split": f"fold_{fold_number}"})
         self.cfg = cfg
         self.data_dir = Path(cfg.dir.data_dir)
         self.processed_dir = Path(cfg.dir.processed_dir)
