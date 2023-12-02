@@ -104,8 +104,6 @@ if __name__ == "__main__":
 
 
 def train_fold(cfg: TrainConfig, fold_number: int):
-    # フォールドに基づいて設定を動的に上書き
-    cfg = OmegaConf.merge(cfg, {"split": f"fold_{fold_number}"})
     
     seed_everything(cfg.seed)
 
