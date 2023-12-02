@@ -102,7 +102,7 @@ if __name__ == "__main__":
     main()
 
 
-@hydra.main(config_path="conf", config_name="train", version_base="1.2")
+
 def train_fold(cfg: TrainConfig, fold_number: int):
     # フォールドに基づいて設定を動的に上書き
     cfg = OmegaConf.merge(cfg, {"split": f"fold_{fold_number}"})
@@ -178,7 +178,8 @@ def train_fold(cfg: TrainConfig, fold_number: int):
 
     return
 
-def main():
+@hydra.main(config_path="conf", config_name="train", version_base="1.2")
+def main(cfg: TrainConfig):
     # 各フォールドでトレーニングを実行
     for fold_number in range(1, 6):
         train_fold(fold_number=fold_number)
