@@ -15,8 +15,8 @@ defaults:
   - model: Spec2DCNN
   - feature_extractor: CNNSpectrogram
   - decoder: UNet1DDecoder
-  - split: fold_0
 
+split: fold_0
 seed: 42
 exp_name: dummy
 duration: 5760 # duration * 5 = 秒数
