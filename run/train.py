@@ -182,7 +182,7 @@ def train_fold(cfg: TrainConfig, fold_number: int):
 def main(cfg: TrainConfig):
     # 各フォールドでトレーニングを実行
     for fold_number in range(1, 6):
-        train_fold(fold_number=fold_number)
+        train_fold(cfg, fold_number=fold_number)
 
 if __name__ == "__main__":
     main()
