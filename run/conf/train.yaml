@@ -49,7 +49,7 @@ aug:
   
 # post_process
 pp:
-  score_th: 0.2
+  score_th: 0.02
   distance: 10
 
 # label
