@@ -373,18 +373,7 @@ class SegDataModule(LightningDataModule):
         self.data_dir = Path(cfg.dir.data_dir)
         self.processed_dir = Path(cfg.dir.processed_dir)
         self.event_df = pl.read_csv(self.data_dir / "train_events.csv").drop_nulls()
-
-        # fold_numberに基づいて、適切なYAMLファイルを読み込む
-        with open(f'conf/split/fold_{fold_number}.yaml', 'r') as file:
-            fold_config = yaml.safe_load(file)
-
-        # トレーニングとバリデーションのシリーズIDを設定
-        self.cfg.split.train_series_ids = fold_config['train_series_ids']
-        self.cfg.split.valid_series_ids = fold_config['valid_series_ids']
-
-        # 以下、train_featuresとvalid_chunk_featuresの読み込み
-        # ...
-
+        self.cfg.split = f"fold_{fold_number}"
         self.train_event_df = self.event_df.filter(
             pl.col("series_id").is_in(self.cfg.split.train_series_ids)
         )
