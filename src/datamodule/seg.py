@@ -12,6 +12,7 @@ from torchvision.transforms.functional import resize
 
 from src.conf import InferenceConfig, TrainConfig
 from src.utils.common import pad_if_needed
+import yaml
 
 
 ###################
@@ -376,7 +377,7 @@ class SegDataModule(LightningDataModule):
 
 
         # フォールド設定ファイルのパスを指定
-        fold_config_path = self.data_dir / f"conf/split/fold_{fold_number}.yaml"
+        fold_config_path = f"/kaggle/input/cmi-code-1/kaggle-child-mind-institute-detect-sleep-states/run/conf/split/fold_{fold_number}.yaml"
 
         # 設定ファイルを開き、内容を読み込む
         with open(fold_config_path, 'r') as file:
