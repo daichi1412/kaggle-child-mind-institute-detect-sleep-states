@@ -179,7 +179,7 @@ def train_fold(cfg: TrainConfig, fold_number: int):
 @hydra.main(config_path="conf", config_name="train", version_base="1.2")
 def main(cfg: TrainConfig):
     # 各フォールドでトレーニングを実行
-    for fold_number in range(1, 6):
+    for fold_number in range(1, 5):
         train_fold(cfg, fold_number=fold_number)
 
 if __name__ == "__main__":
