@@ -304,103 +304,24 @@ class TestDataset(Dataset):
 ###################
 # DataModule
 ###################
-# class SegDataModule(LightningDataModule):
-#     def __init__(self, cfg: TrainConfig):
-#         super().__init__()
-#         self.cfg = cfg
-#         self.data_dir = Path(cfg.dir.data_dir)
-#         self.processed_dir = Path(cfg.dir.processed_dir)
-#         self.event_df = pl.read_csv(self.data_dir / "train_events.csv").drop_nulls()
-#         self.train_event_df = self.event_df.filter(
-#             pl.col("series_id").is_in(self.cfg.split.train_series_ids)
-#         )
-#         self.valid_event_df = self.event_df.filter(
-#             pl.col("series_id").is_in(self.cfg.split.valid_series_ids)
-#         )
-#         # train data
-#         self.train_features = load_features(
-#             feature_names=self.cfg.features,
-#             series_ids=self.cfg.split.train_series_ids,
-#             processed_dir=self.processed_dir,
-#             phase="train",
-#         )
-
-#         # valid data
-#         self.valid_chunk_features = load_chunk_features(
-#             duration=self.cfg.duration,
-#             feature_names=self.cfg.features,
-#             series_ids=self.cfg.split.valid_series_ids,
-#             processed_dir=self.processed_dir,
-#             phase="train",
-#         )
-
-#     def train_dataloader(self):
-#         train_dataset = TrainDataset(
-#             cfg=self.cfg,
-#             event_df=self.train_event_df,
-#             features=self.train_features,
-#         )
-#         train_loader = DataLoader(
-#             train_dataset,
-#             batch_size=self.cfg.dataset.batch_size,
-#             shuffle=True,
-#             num_workers=self.cfg.dataset.num_workers,
-#             pin_memory=True,
-#             drop_last=True,
-#         )
-#         return train_loader
-
-#     def val_dataloader(self):
-#         valid_dataset = ValidDataset(
-#             cfg=self.cfg,
-#             chunk_features=self.valid_chunk_features,
-#             event_df=self.valid_event_df,
-#         )
-#         valid_loader = DataLoader(
-#             valid_dataset,
-#             batch_size=self.cfg.dataset.batch_size,
-#             shuffle=False,
-#             num_workers=self.cfg.dataset.num_workers,
-#             pin_memory=True,
-#         )
-#         return valid_loader
-
-
 
 class SegDataModule(LightningDataModule):
-    def __init__(self, cfg: TrainConfig, fold_number: int):
+    def __init__(self, cfg: TrainConfig):
         super().__init__()
         self.cfg = cfg
         self.data_dir = Path(cfg.dir.data_dir)
         self.processed_dir = Path(cfg.dir.processed_dir)
         self.event_df = pl.read_csv(self.data_dir / "train_events.csv").drop_nulls()
-
-
-        # フォールド設定ファイルのパスを指定
-        fold_config_path = f"/kaggle/input/cmi-code-1/kaggle-child-mind-institute-detect-sleep-states/run/conf/split/fold_{fold_number}.yaml"
-
-        # 設定ファイルを開き、内容を読み込む
-        with open(fold_config_path, 'r') as file:
-            fold_config = yaml.safe_load(file)
-
-        # train_series_idsとvalid_series_idsを取得
-        train_series_ids = fold_config['train_series_ids']
-        valid_series_ids = fold_config['valid_series_ids']
-
-        # トレーニングとバリデーションデータセットをフィルタリング
-        self.train_event_df = self.event_df.filter(pl.col("series_id").is_in(train_series_ids))
-        self.valid_event_df = self.event_df.filter(pl.col("series_id").is_in(valid_series_ids))
-
-        # self.train_event_df = self.event_df.filter(
-        #     pl.col("series_id").is_in(self.cfg.split.train_series_ids)
-        # )
-        # self.valid_event_df = self.event_df.filter(
-        #     pl.col("series_id").is_in(self.cfg.split.valid_series_ids)
-        # )
+        self.train_event_df = self.event_df.filter(
+            pl.col("series_id").is_in(self.cfg.split.train_series_ids)
+        )
+        self.valid_event_df = self.event_df.filter(
+            pl.col("series_id").is_in(self.cfg.split.valid_series_ids)
+        )
         # train data
         self.train_features = load_features(
             feature_names=self.cfg.features,
-            series_ids=train_series_ids,
+            series_ids=self.cfg.split.train_series_ids,
             processed_dir=self.processed_dir,
             phase="train",
         )
@@ -409,7 +330,7 @@ class SegDataModule(LightningDataModule):
         self.valid_chunk_features = load_chunk_features(
             duration=self.cfg.duration,
             feature_names=self.cfg.features,
-            series_ids=valid_series_ids,
+            series_ids=self.cfg.split.valid_series_ids,
             processed_dir=self.processed_dir,
             phase="train",
         )
@@ -444,4 +365,84 @@ class SegDataModule(LightningDataModule):
             pin_memory=True,
         )
         return valid_loader
+
+
+
+# class SegDataModule(LightningDataModule):
+#     def __init__(self, cfg: TrainConfig, fold_number: int):
+#         super().__init__()
+#         self.cfg = cfg
+#         self.data_dir = Path(cfg.dir.data_dir)
+#         self.processed_dir = Path(cfg.dir.processed_dir)
+#         self.event_df = pl.read_csv(self.data_dir / "train_events.csv").drop_nulls()
+
+
+#         # フォールド設定ファイルのパスを指定
+#         fold_config_path = f"/kaggle/input/cmi-code-1/kaggle-child-mind-institute-detect-sleep-states/run/conf/split/fold_{fold_number}.yaml"
+
+#         # 設定ファイルを開き、内容を読み込む
+#         with open(fold_config_path, 'r') as file:
+#             fold_config = yaml.safe_load(file)
+
+#         # train_series_idsとvalid_series_idsを取得
+#         train_series_ids = fold_config['train_series_ids']
+#         valid_series_ids = fold_config['valid_series_ids']
+
+#         # トレーニングとバリデーションデータセットをフィルタリング
+#         self.train_event_df = self.event_df.filter(pl.col("series_id").is_in(train_series_ids))
+#         self.valid_event_df = self.event_df.filter(pl.col("series_id").is_in(valid_series_ids))
+
+#         # self.train_event_df = self.event_df.filter(
+#         #     pl.col("series_id").is_in(self.cfg.split.train_series_ids)
+#         # )
+#         # self.valid_event_df = self.event_df.filter(
+#         #     pl.col("series_id").is_in(self.cfg.split.valid_series_ids)
+#         # )
+#         # train data
+#         self.train_features = load_features(
+#             feature_names=self.cfg.features,
+#             series_ids=train_series_ids,
+#             processed_dir=self.processed_dir,
+#             phase="train",
+#         )
+
+#         # valid data
+#         self.valid_chunk_features = load_chunk_features(
+#             duration=self.cfg.duration,
+#             feature_names=self.cfg.features,
+#             series_ids=valid_series_ids,
+#             processed_dir=self.processed_dir,
+#             phase="train",
+#         )
+
+#     def train_dataloader(self):
+#         train_dataset = TrainDataset(
+#             cfg=self.cfg,
+#             event_df=self.train_event_df,
+#             features=self.train_features,
+#         )
+#         train_loader = DataLoader(
+#             train_dataset,
+#             batch_size=self.cfg.dataset.batch_size,
+#             shuffle=True,
+#             num_workers=self.cfg.dataset.num_workers,
+#             pin_memory=True,
+#             drop_last=True,
+#         )
+#         return train_loader
+
+#     def val_dataloader(self):
+#         valid_dataset = ValidDataset(
+#             cfg=self.cfg,
+#             chunk_features=self.valid_chunk_features,
+#             event_df=self.valid_event_df,
+#         )
+#         valid_loader = DataLoader(
+#             valid_dataset,
+#             batch_size=self.cfg.dataset.batch_size,
+#             shuffle=False,
+#             num_workers=self.cfg.dataset.num_workers,
+#             pin_memory=True,
+#         )
+#         return valid_loader
 
